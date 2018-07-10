@@ -47,7 +47,6 @@ printVM ,printDatastore,printHost  = 1,1,1
 
 
 # logging
-import logging
 formatter = logging.Formatter('%(message)s')
 
 
@@ -253,10 +252,14 @@ def main() :
         for i in range(0,len(hostVmsNames)):
             VMLogger.info("{},{},{},{},{}".format(date,time,hostVmsNames[i], hostVmsIps[i], hostVmsState[i]))
         
+        es = Elasticsearch([{'host': '100.80.96.7', 'port': 9200 , 'user':"elastic", "password": "dna"}])
 
+        with open('vmlog.log') as f:
+            reader = csv.DictReader(f)
+            helpers.bulk(es, reader, index='vm-index', doc_type='log')
 
     except IOError as e:
-    	print("I/O error({0}): {1}".format(e.errno, e.strerror))
+        print("I/O error({0}): {1}".format(e.errno, e.strerror))
 
 
 
