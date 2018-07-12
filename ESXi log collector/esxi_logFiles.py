@@ -42,7 +42,7 @@ time = x[1]
 MBFACTOR = float(1 << 20)
 
 # flags to get information ( use 1 or 0 as per requirement)
-printVM ,printDatastore,printHost  = 1,1,1
+printVM ,printDatastore,printHost  = 1,0,0
 
 
 
@@ -252,11 +252,12 @@ def main() :
         for i in range(0,len(hostVmsNames)):
             VMLogger.info("{},{},{},{},{}".format(date,time,hostVmsNames[i], hostVmsIps[i], hostVmsState[i]))
         
-        es = Elasticsearch([{'host': '100.80.96.7', 'port': 9200 , 'user':"elastic", "password": "dna"}])
+        #es = Elasticsearch([{'host': '100.80.96.7', 'port': 9200 , 'user':"elastic", "password": "dna"}])
+        #es = Elasticsearch([{'host': 'localhost', 'port': 9200 }])
 
-        with open('vmlog.log') as f:
-            reader = csv.DictReader(f)
-            helpers.bulk(es, reader, index='vm-index', doc_type='log')
+        #with open('vmlog.log') as f:
+        #    reader = csv.DictReader(f)
+        #    helpers.bulk(es, reader, index='vm-index', doc_type='log')
 
     except IOError as e:
         print("I/O error({0}): {1}".format(e.errno, e.strerror))
