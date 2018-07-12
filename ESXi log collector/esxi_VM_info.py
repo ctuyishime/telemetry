@@ -676,6 +676,14 @@ def main() :
             VMLogger.info("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(date,time,vmName[i], vmTemplate[i], vmPath[i] , vmDSlocation[i] , vmGuest[i] , vmInstanceUUID[i],vmBioUUID[i], vmIP[i] , VMwareTools[i] , vmGuest1[i] , vmNumCPU[i] , vmMemory[i] , vmStatus[i] , vmState[i] , vmCPUready[i] , vmCPUusage[i] , vmMEMactive[i] , vmMEMshared[i] , vmMEMballoon[i],
 vmDS_readIO[i] , vmDS_writeIO[i], vmDS_finalIO[i] , vmDS_readLatency[i], vmDS_writeLatency[i] , vmDS_totalLatency[i] , vm_NetUsageRx[i] , vm_NetUsageTx[i] , vm_NetUsageTotal[i]))
 
+        es = Elasticsearch([{'host': '100.80.96.7', 'port': 9200 , 'user':"elastic", "password": "dna"}])
+        #es = Elasticsearch([{'host': 'localhost', 'port': 9200 }])
+
+        with open('vmlog.log') as f:
+            reader = csv.DictReader(f)
+            helpers.bulk(es, reader, index='vm-index', doc_type='log')
+
+
     except IOError as e:
         print("I/O error({0}): {1}".format(e.errno, e.strerror))
 
