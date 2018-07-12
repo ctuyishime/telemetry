@@ -12,19 +12,18 @@ from datetime import datetime ,timedelta
 from pyVmomi import vim
 from elasticsearch import helpers, Elasticsearch
 import logging
-import datetime
-import pytz
+import csv
 import time
-collection_time = datetime.datetime.now(pytz.utc)
+collection_time = datetime.utcnow()
 
 # flags to get information ( use 1 or 0 as per requirement)
 printVM ,printDatastore,printHost  = 1,1,1
 
 
 # date time for every execution (keeping same date time for one batch)
-x = datetime.now().strftime('%Y-%m-%d %H:%M:%S').split()
-date = x[0]
-time = x[1]
+#x = datetime.now().strftime('%Y-%m-%d %H:%M:%S').split()
+#date = x[0]
+#time = x[1]
 
 
 # logging
@@ -498,13 +497,13 @@ def vm_net_usage(vm_moref, content, vchtime, perf_dict):
     return statdata_rx,statdata_tx,statdata_total
 
 
-def collect_esxi_data(host,user,pwd,ssl):
+def collect_esxi_data(host,user,pwd,ssl, es):
 
-    now = datetime.datetime.now()
-
+    #now = datetime.datetime.now()
+    es = es
     try:
         si= SmartConnect(host=host,user=user,pwd=pwd ,sslContext=ssl )
-        print('Collecting Information at : ' , str(now))
+        print('Collecting Information')
 
         content = si.RetrieveContent()
         
@@ -622,11 +621,11 @@ def main() :
     s=ssl.SSLContext(ssl.PROTOCOL_TLSv1)
     s.verify_mode=ssl.CERT_NONE
 
-    es = Elasticsearch([{'host': '100.80.96.7', 'port': 9200 , 'user':"elastic", "password": "dna"}])
-    #es = Elasticsearch([{'host': 'localhost', 'port': 9200 }])
+    #es = Elasticsearch([{'host': '100.80.96.7', 'port': 9200 , 'user':"elastic", "password": "dna"}])
+    es = Elasticsearch([{'host': 'localhost', 'port': 9200 }])
     
     while True:
-        collect_esxi_data(host=opts.shost,user=opts.username,pwd=opts.password ,sslContext=s)
+        collect_esxi_data(opts.shost,opts.username,opts.password ,s , es)
         time.sleep(60)
 
 
